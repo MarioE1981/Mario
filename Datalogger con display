@@ -1,3 +1,6 @@
+long t1=0;
+long pausa = 1*60*1000;  //60 secondi
+
 #include <Wire.h>   
 
 #include <LiquidCrystal_I2C.h>
@@ -25,6 +28,8 @@ SD card attached to SPI bus as follows:
 File logfile;    // crea un log file dove scrivere i dati
 
 void setup() {
+  t1=millis();
+  
   lcd.init();
   lcd.init();
   lcd.backlight(); 
@@ -41,7 +46,7 @@ rtc.begin();   //inizializza rtc
    // sd card
     if (!SD.begin(10)){   //! significa not: se la scheda non è presente
       Serial.println("errore sd");
-      while(1);           //while 1 blocca lo sketch all'infinito
+      while(1);           //while blocca lo sketch all'infinito
     }
 }
 
@@ -49,11 +54,11 @@ float temp, hum;   //float indica una variabile
 
 
 void loop() {
-  
+  // put your main code here, to run repeatedly:
   DateTime now = rtc.now();       //recupera l'ora corrente
   dht11.read2(&temp, &hum, NULL); //leggo il sensore, null perchè prevede 3 variabili
   logdata(now, temp, hum);        
-                    // delay 6000000 sono 10 minuti  
+                    //6000000 sono 10 minuti  
 }
 
 void logdata(DateTime now, float t, float h) {  //scrivo la funzione
@@ -74,11 +79,15 @@ void logdata(DateTime now, float t, float h) {  //scrivo la funzione
    lcd.setCursor(0,1);
    lcd.print("T:" + String(t) + " " +"H:" + h + "%");
 
-   
-   logfile = SD.open("templog.txt", FILE_WRITE);      //apre il file in scrittura
+   long diff = millis()-t1;
+   if (diff > pausa) 
+   {
+    logfile = SD.open("templog.txt", FILE_WRITE);      //apre il file in scrittura
      if (logfile){                                    
       logfile.println(msg);                            //scrive il messaggio
       logfile.close();
+   }
+   
      }
 
      
