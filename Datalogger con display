@@ -1,5 +1,5 @@
 long t1=0;
-long pausa = 1*60*1000;  //60 secondi
+long pausa = 5000;  //5 secondi
 
 #include <Wire.h>   
 
@@ -72,7 +72,7 @@ void logdata(DateTime now, float t, float h) {  //scrivo la funzione
      "t: "+String(t)+"C/t"+
      "h: "+String(h)+"%";
      
-   Serial.println(msg);  //scrive il messaggio sul monitor pc
+     //scrive il messaggio sul monitor pc
                            
    lcd.setCursor(1,0);  //imposta le colonne e le righe
    lcd.print(String(pad2(now.hour()))+":"+String(pad2(now.minute())));
@@ -82,6 +82,8 @@ void logdata(DateTime now, float t, float h) {  //scrivo la funzione
    long diff = millis()-t1;
    if (diff > pausa) 
    {
+    t1 += pausa;
+    Serial.println(msg);
     logfile = SD.open("templog.txt", FILE_WRITE);      //apre il file in scrittura
      if (logfile){                                    
       logfile.println(msg);                            //scrive il messaggio
